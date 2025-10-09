@@ -9,11 +9,6 @@ chai.use(chaiHttp);
 const browser = new Browser();
 Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 
-
-  suiteSetup(function(done) {
-    return browser.visit('/', done);
-  });
-
 suiteSetup(function(done) {
   return browser.visit('/', done);
 });
