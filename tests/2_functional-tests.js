@@ -14,7 +14,11 @@ Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
     return browser.visit('/', done);
   });
 
-  suite('Functional Tests', function () {
+suiteSetup(function(done) {
+  return browser.visit('/', done);
+});
+
+suite('Functional Tests', function () {
   this.timeout(5000);
   suite('Integration tests with chai-http', function () {
     // #1
@@ -90,7 +94,12 @@ test('send {surname: "da Verrazzano"}', function(done) {
 
       done();
     });
+    // #6
+    test('Submit the surname "Vespucci" in the HTML form', function (done) {
+      assert.fail();
 
+      done();
     });
   });
+});
 });
