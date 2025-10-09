@@ -14,10 +14,12 @@ const browser = new Browser();
 // Usa localhost para FreeCodeCamp y Render ajusta el puerto
 browser.site = process.env.APP_URL || 'http://localhost:3000';
 
-// Visita la página principal antes de los tests de Zombie
-suiteSetup(async function() {
+// ==========================
+// suiteSetup con done() corregido
+// ==========================
+suiteSetup(function(done) {
   this.timeout(5000);
-  await browser.visit('/');
+  return browser.visit('/', () => done());
 });
 
 // ==========================
