@@ -7,8 +7,9 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 // Configura la URL de tu aplicación
-Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 const browser = new Browser();
+Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
+
 
 // suiteSetup para visitar la página principal antes de las pruebas
 suiteSetup(function(done) {
