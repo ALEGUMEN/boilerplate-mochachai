@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-     "test": "mocha --ui tdd tests/**/*.js"
+    "test": "mocha --ui tdd tests/**/*.js"
   },
   "dependencies": {
     "body-parser": "1.19.0",
@@ -13,7 +13,7 @@
     "chai-http": "4.3.0",
     "cors": "2.8.5",
     "express": "4.17.1",
-    "zombie": "6.1.4"
+    "zombie": "^6.1.4"
   },
   "license": "MIT",
   "devDependencies": {
