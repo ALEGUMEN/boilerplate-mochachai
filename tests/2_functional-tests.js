@@ -17,7 +17,7 @@ browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 // ==========================
 suiteSetup(function(done) {
   this.timeout(5000);
-  return browser.visit('/', () => done());
+  browser.visit('/', done);
 });
 
 // ==========================
@@ -84,28 +84,22 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
   suite('"Famous Italian Explorers" form', function () {
 
     test('Submit the surname "Colombo" in the HTML form', async function() {
-      this.timeout(5000);
-      await browser.visit('/');
       await browser.fill('surname', 'Colombo'); // nombre del input
       await browser.pressButton('submit');       // botón submit
 
       browser.assert.success();
-      browser.assert.text('span#name', 'Cristoforo');      // nombre correcto
-      browser.assert.text('span#surname', 'Colombo');      // apellido correcto
-      browser.assert.element('span#dates');               // span#dates existe
-      browser.assert.elements('span#dates', 1);           // solo hay uno
+      browser.assert.text('span#name', 'Cristoforo');
+      browser.assert.text('span#surname', 'Colombo');
+      browser.assert.elements('span#dates', 1);
     });
 
     test('Submit the surname "Vespucci" in the HTML form', async function() {
-      this.timeout(5000);
-      await browser.visit('/');
       await browser.fill('surname', 'Vespucci');
       await browser.pressButton('submit');
 
       browser.assert.success();
       browser.assert.text('span#name', 'Amerigo');
       browser.assert.text('span#surname', 'Vespucci');
-      browser.assert.element('span#dates');
       browser.assert.elements('span#dates', 1);
     });
 
