@@ -1,13 +1,15 @@
 const chai = require('chai');
 const assert = chai.assert;
-const Browser = require('zombie');
+
 
 const server = require('../server');
+
 const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 // Configura la URL de tu aplicación
 const browser = new Browser();
+
 Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 
 
