@@ -10,9 +10,7 @@ chai.use(chaiHttp);
 // Configurar Zombie.js
 // ==========================
 const browser = new Browser();
-
-// Usa localhost para FreeCodeCamp y Render ajusta el puerto
-browser.site = process.env.APP_URL || 'http://localhost:3000';
+browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 
 // ==========================
 // suiteSetup con done() corregido
@@ -89,11 +87,13 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
       this.timeout(5000);
       await browser.visit('/');
       await browser.fill('surname', 'Colombo'); // nombre del input
-      await browser.pressButton('submit'); // botón submit
+      await browser.pressButton('submit');       // botón submit
 
       browser.assert.success();
-      browser.assert.text('#name', 'Cristoforo'); // ajusta según tu HTML
-      browser.assert.text('#surname', 'Colombo');
+      browser.assert.text('span#name', 'Cristoforo');      // nombre correcto
+      browser.assert.text('span#surname', 'Colombo');      // apellido correcto
+      browser.assert.element('span#dates');               // span#dates existe
+      browser.assert.elements('span#dates', 1);           // solo hay uno
     });
 
     test('Submit the surname "Vespucci" in the HTML form', async function() {
@@ -103,8 +103,10 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
       await browser.pressButton('submit');
 
       browser.assert.success();
-      browser.assert.text('#name', 'Amerigo');
-      browser.assert.text('#surname', 'Vespucci');
+      browser.assert.text('span#name', 'Amerigo');
+      browser.assert.text('span#surname', 'Vespucci');
+      browser.assert.element('span#dates');
+      browser.assert.elements('span#dates', 1);
     });
 
   });
