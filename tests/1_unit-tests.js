@@ -28,7 +28,7 @@ suite('Unit Tests', function () {
     });
   });
 
-
+  
 
   suite('Equality', function () {
     // #5
@@ -52,7 +52,7 @@ suite('Unit Tests', function () {
     });
   });
 
-
+  
 
   function weirdNumbers(delta) {
     return 1 + delta - Math.random();
@@ -80,7 +80,7 @@ suite('Unit Tests', function () {
     });
   });
 
-
+  
 
   const winterMonths = ['dec,', 'jan', 'feb', 'mar'];
   const backendLanguages = ['php', 'python', 'javascript', 'ruby', 'asp'];
@@ -97,7 +97,7 @@ suite('Unit Tests', function () {
     });
   });
 
-
+  
 
   const formatPeople = function (name, age) {
     return '# name: ' + name + ', age: ' + age + '\n';

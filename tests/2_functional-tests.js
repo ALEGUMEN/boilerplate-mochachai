@@ -1,15 +1,21 @@
-const Browser = require('zombie');
-Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
+const chai = require('chai');
+const assert = chai.assert;
+
+const server = require('../server');
+
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
 
 const browser = new Browser();
 
-suite('Functional Tests with Zombie.js', function() {
-  this.timeout(10000);  // aumentar tiempo por si Render tarda
+browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 
-  suiteSetup(function(done) {
-    return browser.visit('/', done);
-  });
+suiteSetup(function(done) {
+  return browser.visit('/', done);
+});
 
+suite('Functional Tests', function () {
+  this.timeout(5000);
   suite('Integration tests with chai-http', function () {
     // #1
     test('Test GET /hello with no name', function (done) {
@@ -89,7 +95,7 @@ test('send {surname: "da Verrazzano"}', function(done) {
       assert.fail();
 
       done();
-        });
-      });
     });
   });
+});
+});
