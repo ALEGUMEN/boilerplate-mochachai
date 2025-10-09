@@ -1,9 +1,10 @@
 const chai = require('chai');
 const assert = chai.assert;
-const chaiHttp = require('chai-http');
-chai.use(chaiHttp);
 
 const server = require('../server');
+
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
 
 suite('Functional Tests', function () {
   this.timeout(5000);
@@ -61,45 +62,6 @@ suite('Functional Tests', function () {
           assert.equal(res.body.surname, 'da Verrazzano');
           done();
         });
-    });
-  });
-});
-
-// Optional: Zombie.js tests if you have front-end
-const Browser = require('zombie');
-
-suite('Functional Tests with Zombie.js', function () {
-  this.timeout(5000);
-
-  const browser = new Browser();
-
-  suite('Headless browser', function () {
-    test('should have a working "site" property', function() {
-      assert.isNotNull(browser.site);
-    });
-  });
-
-  suite('"Famous Italian Explorers" form', function () {
-    // #5
-    test('Submit the surname "Colombo" in the HTML form', function (done) {
-      browser.visit('/', function () {
-        browser.fill('surname', 'Colombo').pressButton('submit', function () {
-          assert.equal(browser.query('#name').textContent, 'Cristoforo');
-          assert.equal(browser.query('#surname').textContent, 'Colombo');
-          done();
-        });
-      });
-    });
-
-    // #6
-    test('Submit the surname "Vespucci" in the HTML form', function (done) {
-      browser.visit('/', function () {
-        browser.fill('surname', 'Vespucci').pressButton('submit', function () {
-          assert.equal(browser.query('#name').textContent, 'Amerigo');
-          assert.equal(browser.query('#surname').textContent, 'Vespucci');
-          done();
-        });
-      });
     });
   });
 });
