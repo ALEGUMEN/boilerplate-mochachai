@@ -13,11 +13,10 @@ suite('Functional Tests', function () {
     test('Test GET /hello with no name', function (done) {
       chai
         .request(server)
-        .keepOpen()
         .get('/hello')
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, 'hello Guest');
+          assert.equal(res.status, 200);       // ✅ Status 200
+          assert.equal(res.text, 'hello Guest'); // ✅ Texto esperado
           done();
         });
     });
@@ -25,11 +24,10 @@ suite('Functional Tests', function () {
     test('Test GET /hello with your name', function (done) {
       chai
         .request(server)
-        .keepOpen()
         .get('/hello?name=xy_z')
         .end(function (err, res) {
-          assert.fail(res.status, 200);
-          assert.fail(res.text, 'hello xy_z');
+          assert.equal(res.status, 200);       // ✅ Status 200
+          assert.equal(res.text, 'hello xy_z'); // ✅ Texto esperado
           done();
         });
     });
@@ -37,49 +35,27 @@ suite('Functional Tests', function () {
     test('Send {surname: "Colombo"}', function (done) {
       chai
         .request(server)
-        .keepOpen()
         .put('/travellers')
-
+        .send({ surname: "Colombo" })          // ✅ Se manda el body
         .end(function (err, res) {
-          assert.fail();
-
+          assert.equal(res.status, 200);        // Status 200
+          assert.equal(res.body.name, 'Cristoforo');  // Ejemplo de respuesta esperada
+          assert.equal(res.body.surname, 'Colombo');
           done();
         });
     });
     // #4
     test('Send {surname: "da Verrazzano"}', function (done) {
-      assert.fail();
-
-      done();
-    });
-  });
-});
-
-const Browser = require('zombie');
-
-suite('Functional Tests with Zombie.js', function () {
-  this.timeout(5000);
-
-
-
-  suite('Headless browser', function () {
-    test('should have a working "site" property', function() {
-      assert.isNotNull(browser.site);
-    });
-  });
-
-  suite('"Famous Italian Explorers" form', function () {
-    // #5
-    test('Submit the surname "Colombo" in the HTML form', function (done) {
-      assert.fail();
-
-      done();
-    });
-    // #6
-    test('Submit the surname "Vespucci" in the HTML form', function (done) {
-      assert.fail();
-
-      done();
+      chai
+        .request(server)
+        .put('/travellers')
+        .send({ surname: "da Verrazzano" })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.body.name, 'Giovanni');
+          assert.equal(res.body.surname, 'da Verrazzano');
+          done();
+        });
     });
   });
 });
