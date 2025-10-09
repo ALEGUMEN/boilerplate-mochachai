@@ -10,8 +10,6 @@ suite('Functional Tests with Zombie.js', function() {
     return browser.visit('/', done);
   });
 
-suite('Functional Tests', function () {
-  this.timeout(5000);
   suite('Integration tests with chai-http', function () {
     // #1
     test('Test GET /hello with no name', function (done) {
@@ -95,4 +93,3 @@ test('send {surname: "da Verrazzano"}', function(done) {
       });
     });
   });
-});
