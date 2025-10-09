@@ -8,21 +8,18 @@ suite('Unit Tests', function () {
       assert.isNull(null, 'This is an optional error description - e.g. null is null');
       assert.isNotNull(1, '1 is not null');
     });
-
     // #2
     test('#isDefined, #isUndefined', function () {
       assert.isDefined(null, 'null is not undefined');
       assert.isUndefined(undefined, 'undefined IS undefined');
       assert.isDefined('hello', 'A string is not undefined');
     });
-
     // #3
     test('#isOk, #isNotOk', function () {
       assert.isNotOk(null, 'null is falsey');
       assert.isOk("I'm truthy", 'A string is truthy');
       assert.isOk(true, 'true is truthy');
     });
-
     // #4
     test('#isTrue, #isNotTrue', function () {
       assert.isTrue(true, 'true is true');
@@ -31,7 +28,8 @@ suite('Unit Tests', function () {
     });
   });
 
-  // -----------------------------------------------------------------------------  
+  // -----------------------------------------------------------------------------
+
   suite('Equality', function () {
     // #5
     test('#equal, #notEqual', function () {
@@ -40,7 +38,6 @@ suite('Unit Tests', function () {
       assert.equal(6 * '2', '12');
       assert.notEqual(6 + '2', '12');
     });
-
     // #6
     test('#strictEqual, #notStrictEqual', function () {
       assert.notStrictEqual(6, '6');
@@ -48,7 +45,6 @@ suite('Unit Tests', function () {
       assert.strictEqual(6 * '2', 12);
       assert.notStrictEqual([1, 'a', {}], [1, 'a', {}]);
     });
-
     // #7
     test('#deepEqual, #notDeepEqual', function () {
       assert.deepEqual({ a: '1', b: 5 }, { b: 5, a: '1' }, "The order of keys doesn't matter");
@@ -56,7 +52,8 @@ suite('Unit Tests', function () {
     });
   });
 
-  // -----------------------------------------------------------------------------  
+  // -----------------------------------------------------------------------------
+
   function weirdNumbers(delta) {
     return 1 + delta - Math.random();
   }
@@ -69,7 +66,6 @@ suite('Unit Tests', function () {
       assert.isAbove(Math.PI, 3);
       assert.isAtMost(1 - Math.random(), 1);
     });
-
     // #9
     test('#isBelow, #isAtLeast', function () {
       assert.isAtLeast('world'.length, 5);
@@ -77,7 +73,6 @@ suite('Unit Tests', function () {
       assert.isBelow(5 % 2, 2);
       assert.isBelow(2 / 3, 1);
     });
-
     // #10
     test('#approximately', function () {
       assert.approximately(weirdNumbers(0.5), 1, 0.5);
@@ -85,17 +80,16 @@ suite('Unit Tests', function () {
     });
   });
 
-  // -----------------------------------------------------------------------------  
-  const winterMonths = ['dec', 'jan', 'feb', 'mar'];
-  const backendLanguages = ['php', 'python', 'javascript', 'ruby', 'asp'];
+  // -----------------------------------------------------------------------------
 
+  const winterMonths = ['dec,', 'jan', 'feb', 'mar'];
+  const backendLanguages = ['php', 'python', 'javascript', 'ruby', 'asp'];
   suite('Arrays', function () {
     // #11
     test('#isArray, #isNotArray', function () {
       assert.isArray('isThisAnArray?'.split(''), 'String.prototype.split() returns an array');
       assert.isNotArray([1, 2, 3].indexOf(2), 'indexOf returns a number');
     });
-
     // #12
     test('Array #include, #notInclude', function () {
       assert.notInclude(winterMonths, 'jul', "It's summer in july...");
@@ -103,11 +97,11 @@ suite('Unit Tests', function () {
     });
   });
 
-  // -----------------------------------------------------------------------------  
+  // -----------------------------------------------------------------------------
+
   const formatPeople = function (name, age) {
     return '# name: ' + name + ', age: ' + age + '\n';
   };
-
   suite('Strings', function () {
     // #13
     test('#isString, #isNotString', function () {
@@ -115,13 +109,11 @@ suite('Unit Tests', function () {
       assert.isString(process.env.PATH, 'An env variable is a string (or undefined)');
       assert.isString(JSON.stringify({ type: 'object' }), 'JSON is a string');
     });
-
     // #14
     test('String #include, #notInclude', function () {
       assert.include('Arrow', 'row', "'Arrow' contains 'row'");
       assert.notInclude('dart', 'queue', "But 'dart' doesn't contain 'queue'");
     });
-
     // #15
     test('#match, #notMatch', function () {
       const regex = /^#\sname\:\s[\w\s]+,\sage\:\s\d+\s?$/;
@@ -130,7 +122,8 @@ suite('Unit Tests', function () {
     });
   });
 
-  // -----------------------------------------------------------------------------  
+  // -----------------------------------------------------------------------------
+
   const Car = function () {
     this.model = 'sedan';
     this.engines = 1;
@@ -154,7 +147,6 @@ suite('Unit Tests', function () {
       assert.property(airlinePlane, 'engines', 'Planes have engines');
       assert.property(myCar, 'wheels', 'Cars have wheels');
     });
-
     // #17
     test('#typeOf, #notTypeOf', function () {
       assert.typeOf(myCar, 'object');
@@ -163,7 +155,6 @@ suite('Unit Tests', function () {
       assert.typeOf(airlinePlane.engines, 'array');
       assert.typeOf(myCar.wheels, 'number');
     });
-
     // #18
     test('#instanceOf, #notInstanceOf', function () {
       assert.notInstanceOf(myCar, Plane);
@@ -172,4 +163,6 @@ suite('Unit Tests', function () {
       assert.notInstanceOf(myCar.wheels, String);
     });
   });
+
+  // -----------------------------------------------------------------------------
 });
