@@ -1,27 +1,34 @@
 const chai = require('chai');
 const assert = chai.assert;
 const chaiHttp = require('chai-http');
-const Browser = require('zombie'); // Importar Zombie.js
-const server = require('../server');
+const Browser = require('zombie');
+const server = require('../server'); // Asegúrate de exportar tu app/server
 
 chai.use(chaiHttp);
 
-// Instancia de Zombie
+// ==========================
+// Configurar Zombie.js
+// ==========================
 const browser = new Browser();
-browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 
-// Visita la página principal antes de correr los tests de Zombie
+// Usa localhost para FreeCodeCamp y Render ajusta el puerto
+browser.site = process.env.APP_URL || 'http://localhost:3000';
+
+// Visita la página principal antes de los tests de Zombie
 suiteSetup(async function() {
   this.timeout(5000);
   await browser.visit('/');
 });
 
+// ==========================
+// Suite de tests funcionales
+// ==========================
 suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
-  this.timeout(10000); // Timeout mayor para Render
+  this.timeout(10000);
 
-  // =============================
+  // --------------------------
   // Tests con chai-http
-  // =============================
+  // --------------------------
   suite('Integration tests with chai-http', function () {
 
     test('Test GET /hello with no name', function(done) {
@@ -71,19 +78,19 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
     });
   });
 
-  // =============================
-  // Tests con formulario HTML usando Zombie
-  // =============================
+  // --------------------------
+  // Tests de formulario HTML con Zombie
+  // --------------------------
   suite('"Famous Italian Explorers" form', function () {
 
     test('Submit the surname "Colombo" in the HTML form', async function() {
       this.timeout(5000);
       await browser.visit('/');
-      await browser.fill('surname', 'Colombo'); // input name="surname"
+      await browser.fill('surname', 'Colombo'); // nombre del input
       await browser.pressButton('submit'); // botón submit
 
       browser.assert.success();
-      browser.assert.text('#name', 'Cristoforo'); // Ajusta selectores si tu HTML es distinto
+      browser.assert.text('#name', 'Cristoforo'); // ajusta según tu HTML
       browser.assert.text('#surname', 'Colombo');
     });
 
