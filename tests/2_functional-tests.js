@@ -1,44 +1,128 @@
 const chai = require('chai');
 const assert = chai.assert;
+
+const server = require('../server');
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
+
 const Browser = require('zombie');
 
-// Configura la URL de tu aplicación
+// -------------------------
+// Configura Zombie.js
+// -------------------------
 Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 const browser = new Browser();
 
-suite('Functional Tests with Zombie.js', function () {
+// -------------------------
+// Functional Tests
+// -------------------------
+suite('Functional Tests', function () {
   this.timeout(5000);
 
-  // Antes de ejecutar los tests, visita la página raíz
-  suiteSetup(function(done) {
-    return browser.visit('/', done);
-  });
+  // -------------------------
+  // Chai-HTTP Integration Tests
+  // -------------------------
+  suite('Integration tests with chai-http', function () {
 
-  suite('"Famous Italian Explorers" form', function () {
-    // #5
-    test('Submit the surname "Colombo" in the HTML form', function (done) {
-      browser
-        .fill('surname', 'Colombo')   // Llena el input con name="surname"
-        .pressButton('submit', function() { // Presiona el botón con type="submit"
-          assert.equal(browser.success, true, 'Form submission should be successful');
-          assert.equal(browser.field('surname').value, 'Colombo', 'Input value should be Colombo');
-          assert.include(browser.text('body'), 'Cristoforo', 'Response should contain Cristoforo');
-          assert.include(browser.text('body'), 'Colombo', 'Response should contain Colombo');
+    // #1
+    test('Test GET /hello with no name', function (done) {
+      chai
+        .request(server)
+        .get('/hello')
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'hello Guest');
           done();
         });
     });
 
-    // #6
-    test('Submit the surname "Vespucci" in the HTML form', function (done) {
-      browser
-        .fill('surname', 'Vespucci')
-        .pressButton('submit', function() {
-          assert.equal(browser.success, true, 'Form submission should be successful');
-          assert.equal(browser.field('surname').value, 'Vespucci', 'Input value should be Vespucci');
-          assert.include(browser.text('body'), 'Amerigo', 'Response should contain Amerigo');
-          assert.include(browser.text('body'), 'Vespucci', 'Response should contain Vespucci');
+    // #2
+    test('Test GET /hello with your name', function (done) {
+      chai
+        .request(server)
+        .get('/hello?name=xy_z')
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'hello xy_z');
           done();
         });
+    });
+
+    // #3
+    test('Send {surname: "Colombo"}', function (done) {
+      chai
+        .request(server)
+        .put('/travellers')
+        .send({ surname: 'Colombo' })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json');
+          assert.equal(res.body.name, 'Cristoforo');
+          assert.equal(res.body.surname, 'Colombo');
+          done();
+        });
+    });
+
+    // #4
+    test('Send {surname: "da Verrazzano"}', function (done) {
+      chai
+        .request(server)
+        .put('/travellers')
+        .send({ surname: 'da Verrazzano' })
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json');
+          assert.equal(res.body.name, 'Giovanni');
+          assert.equal(res.body.surname, 'da Verrazzano');
+          done();
+        });
+    });
+  });
+
+  // -------------------------
+  // Zombie.js Headless Browser Tests
+  // -------------------------
+  suite('Functional Tests with Zombie.js', function () {
+
+    suiteSetup(function (done) {
+      return browser.visit('/', done);
+    });
+
+    // -------------------------
+    // Form Submission Tests
+    // -------------------------
+    suite('"Famous Italian Explorers" form', function () {
+
+      // #5
+      test('Submit the surname "Colombo" in the HTML form', function (done) {
+        browser
+          .fill('surname', 'Colombo')
+          .then(() => browser.pressButton('submit'))
+          .then(() => {
+            browser.assert.success();
+            browser.assert.text('span#name', 'Cristoforo');
+            browser.assert.text('span#surname', 'Colombo');
+            browser.assert.elements('span#dates', 1);
+            done();
+          })
+          .catch(err => done(err));
+      });
+
+      // #6
+      test('Submit the surname "Vespucci" in the HTML form', function (done) {
+        browser
+          .fill('surname', 'Vespucci')
+          .then(() => browser.pressButton('submit'))
+          .then(() => {
+            browser.assert.success();
+            browser.assert.text('span#name', 'Amerigo');
+            browser.assert.text('span#surname', 'Vespucci');
+            browser.assert.elements('span#dates', 1);
+            done();
+          })
+          .catch(err => done(err));
+      });
+
     });
   });
 });
