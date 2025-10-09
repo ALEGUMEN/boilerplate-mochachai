@@ -15,11 +15,12 @@ suite('Unit Tests', function () {
       assert.isUndefined(undefined, 'undefined IS undefined');
       assert.isDefined('hello', 'A string is not undefined');
     });
+
     // #3
     test('#isOk, #isNotOk', function () {
-      assert.isNotOk(null, 'null is falsey');
-      assert.isOk("I'm truthy", 'A string is truthy');
-      assert.isOk(true, 'true is truthy');
+      assert.isNotOk(null, 'null is falsey');                // falsy
+      assert.isOk("I'm truthy", 'A string is truthy');       // truthy
+      assert.isOk(true, 'true is truthy');                   // truthy
     });
 
     // #4
@@ -80,7 +81,7 @@ suite('Unit Tests', function () {
     // #10
     test('#approximately', function () {
       assert.approximately(weirdNumbers(0.5), 1, 0.5);
-      assert.approximately(weirdNumbers(0.2), 1, 0.8);
+      assert.approximately(weirdNumbers(0.2), 1, 0.5); // delta reducido
     });
   });
 
@@ -159,7 +160,7 @@ suite('Unit Tests', function () {
       assert.typeOf(myCar, 'object');
       assert.typeOf(myCar.model, 'string');
       assert.notTypeOf(airlinePlane.wings, 'string');
-      assert.typeOf(airlinePlane.engines, 'array');
+      assert.isArray(airlinePlane.engines, 'Planes have engines (array)');
       assert.typeOf(myCar.wheels, 'number');
     });
 
