@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const express = require('express');
 const app = express();
 
@@ -7,80 +7,71 @@ const runner = require('./test-runner');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/views/index.html');
-})
-
+// servir carpeta public
 app.use(express.static(__dirname + '/public'));
 
+// ruta principal
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/views/index.html');
+});
+
+// /hello (ya existente)
 app.get('/hello', function (req, res) {
   const name = req.query.name || 'Guest';
   res.type('txt').send('hello ' + name);
-})
+});
 
+// handler para /travellers (normaliza la entrada)
 const travellers = function (req, res) {
-  let data = {};
+  let data = { name: '', surname: '', dates: '' };
+
   if (req.body && req.body.surname) {
-    switch (req.body.surname.toLowerCase()) {
+    const s = String(req.body.surname).trim().toLowerCase();
+
+    switch (s) {
       case 'polo':
-        data = {
-          name: 'Marco',
-          surname: 'Polo',
-          dates: '1254 - 1324'
-        };
+        data = { name: 'Marco', surname: 'Polo', dates: '1254 - 1324' };
         break;
       case 'colombo':
-        data = {
-          name: 'Cristoforo',
-          surname: 'Colombo',
-          dates: '1451 - 1506'
-        };
+        data = { name: 'Cristoforo', surname: 'Colombo', dates: '1451 - 1506' };
         break;
       case 'vespucci':
-        data = {
-          name: 'Amerigo',
-          surname: 'Vespucci',
-          dates: '1454 - 1512'
-        };
+        data = { name: 'Amerigo', surname: 'Vespucci', dates: '1454 - 1512' };
         break;
       case 'da verrazzano':
       case 'verrazzano':
-        data = {
-          name: 'Giovanni',
-          surname: 'da Verrazzano',
-          dates: '1485 - 1528'
-        };
+        data = { name: 'Giovanni', surname: 'da Verrazzano', dates: '1485 - 1528' };
         break;
       default:
-        data = {
-          name: 'unknown'
-        }
+        data = { name: '', surname: '', dates: '' };
     }
   }
+
   res.json(data);
 };
 
-
+// aceptar PUT y POST (así los tests y el cliente quedan cubiertos)
 app.route('/travellers')
-  .put(travellers);
+  .put(travellers)
+  .post(travellers);
 
+// endpoint del test runner (mantenlo igual)
 let error;
 app.get('/_api/get-tests', cors(), function (req, res, next) {
-  if (error)
-    return res.json({ status: 'unavailable' });
+  if (error) return res.json({ status: 'unavailable' });
   next();
 },
-  function (req, res, next) {
-    if (!runner.report) return next();
-    res.json(testFilter(runner.report, req.query.type, req.query.n));
-  },
-  function (req, res) {
-    runner.on('done', function (report) {
-      process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
-    });
+function (req, res, next) {
+  if (!runner.report) return next();
+  res.json(testFilter(runner.report, req.query.type, req.query.n));
+},
+function (req, res) {
+  runner.on('done', function (report) {
+    process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
   });
-
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, function () {
@@ -96,7 +87,6 @@ app.listen(port, function () {
     }
   }, 1500);
 });
-
 
 module.exports = app; // for testing
 
