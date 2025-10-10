@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const express = require('express');
 const app = express();
 
@@ -7,68 +7,51 @@ const runner = require('./test-runner');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
-})
-
-app.use(express.static(__dirname + '/public'));
+});
 
 app.get('/hello', function (req, res) {
   const name = req.query.name || 'Guest';
   res.type('txt').send('hello ' + name);
-})
+});
 
 const travellers = function (req, res) {
   let data = {};
   if (req.body && req.body.surname) {
     switch (req.body.surname.toLowerCase()) {
       case 'polo':
-        data = {
-          name: 'Marco',
-          surname: 'Polo',
-          dates: '1254 - 1324'
-        };
+        data = { name: 'Marco', surname: 'Polo', dates: '1254 - 1324' };
         break;
       case 'colombo':
-        data = {
-          name: 'Cristoforo',
-          surname: 'Colombo',
-          dates: '1451 - 1506'
-        };
+        data = { name: 'Cristoforo', surname: 'Colombo', dates: '1451 - 1506' };
         break;
       case 'vespucci':
-        data = {
-          name: 'Amerigo',
-          surname: 'Vespucci',
-          dates: '1454 - 1512'
-        };
+        data = { name: 'Amerigo', surname: 'Vespucci', dates: '1454 - 1512' };
         break;
       case 'da verrazzano':
       case 'verrazzano':
-        data = {
-          name: 'Giovanni',
-          surname: 'da Verrazzano',
-          dates: '1485 - 1528'
-        };
+        data = { name: 'Giovanni', surname: 'da Verrazzano', dates: '1485 - 1528' };
         break;
       default:
-        data = {
-          name: 'unknown'
-        }
+        data = { name: 'unknown', surname: req.body.surname, dates: 'unknown' };
     }
   }
   res.json(data);
 };
 
-
+// ✅ Aceptar tanto PUT como POST
 app.route('/travellers')
-  .put(travellers);
+  .put(travellers)
+  .post(travellers);
 
 let error;
 app.get('/_api/get-tests', cors(), function (req, res, next) {
-  if (error)
-    return res.json({ status: 'unavailable' });
+  if (error) return res.json({ status: 'unavailable' });
   next();
 },
   function (req, res, next) {
@@ -80,7 +63,6 @@ app.get('/_api/get-tests', cors(), function (req, res, next) {
       process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
     });
   });
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, function () {
@@ -97,8 +79,7 @@ app.listen(port, function () {
   }, 1500);
 });
 
-
-module.exports = app; // for testing
+module.exports = app;
 
 function testFilter(tests, type, n) {
   let out;

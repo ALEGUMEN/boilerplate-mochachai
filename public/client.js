@@ -84,7 +84,7 @@ utils.ready(function () {
 
     if (input.value) {
       const options = {
-        method: 'put',
+        method: 'post', // ✅ Cambiado de 'put' a 'post'
         url: '/travellers',
         type: 'json',
         data: { surname: input.value }
@@ -95,7 +95,6 @@ utils.ready(function () {
       utils.ajax(options, function (err, res) {
         if (err) return console.log(err);
 
-        // <-- Corrección: cierro correctamente los <p>
         div.innerHTML =
           '<p>first name: <span id="name">' + res.name + '</span></p>' +
           '<p>last name: <span id="surname">' + res.surname + '</span></p>' +
