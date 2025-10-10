@@ -5,6 +5,7 @@ const server = require('../server');
 
 chai.use(chaiHttp);
 
+// -------------------- CHAI HTTP TESTS --------------------
 suite('Functional Tests', function () {
   this.timeout(5000);
 
@@ -52,11 +53,9 @@ suite('Functional Tests', function () {
   });
 });
 
-
 // -------------------- ZOMBIE.JS TESTS --------------------
-
 const Browser = require('zombie');
-Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com'; // tu URL base
+Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 const browser = new Browser();
 
 suite('Functional Tests with Zombie.js', function () {

@@ -1,105 +1,30 @@
-function Utils() {
-  this.ready = function (fn) {
-    if (typeof fn !== 'function') return;
+const form = document.getElementById('f1');
+const input = document.getElementById('i1');
+const div = document.getElementById('tn');
 
-    if (document.readyState === 'complete') {
-      return fn();
-    }
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    document.addEventListener('DOMContentLoaded', fn, false);
-  };
+  const surname = input.value;
+  if (!surname) return;
 
-  this.ajax = function (options, cb) {
-    const xmlhttp = new XMLHttpRequest();
+  div.innerHTML = '<p>Loading...</p>';
 
-    xmlhttp.onreadystatechange = function () {
-      if (xmlhttp.readyState === 4) {
-        if (Math.floor(xmlhttp.status / 100) === 2) {
-          let results = xmlhttp.responseText;
-          const type = xmlhttp.getResponseHeader('Content-Type');
-          if (type && type.match('application/json')) {
-            results = JSON.parse(results);
-          }
-          cb(null, results);
-        } else {
-          cb(xmlhttp);
-        }
-      }
-    };
+  try {
+    const res = await fetch('/travellers', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ surname }),
+    });
 
-    const method = options.method || 'get';
-    let url = options.url || '/';
+    const data = await res.json();
 
-    if (url.charAt(url.length - 1) === '/') {
-      url = url.slice(0, url.length - 1);
-    }
-
-    let query;
-    let contentType = "application/x-www-form-urlencoded";
-
-    if (options.data) {
-      if (options.type && options.type === 'json') {
-        query = JSON.stringify(options.data);
-        contentType = "application/json";
-      } else {
-        query = [];
-        for (let key in options.data) {
-          query.push(key + '=' + encodeURIComponent(options.data[key]));
-          query.push('&');
-        }
-        query.pop();
-        query = query.join('');
-      }
-    }
-
-    switch (method.toLowerCase()) {
-      case 'get':
-        if (query) url += '?' + query;
-        xmlhttp.open(method, url, true);
-        xmlhttp.send();
-        break;
-      case 'put':
-      case 'post':
-      case 'patch':
-      case 'delete':
-        xmlhttp.open(method, url, true);
-        xmlhttp.setRequestHeader("Content-type", contentType);
-        xmlhttp.send(query);
-        break;
-      default:
-        return;
-    }
-  };
-}
-
-const utils = new Utils();
-
-utils.ready(function () {
-  const form = document.getElementById('f1');
-  const input = document.getElementById('i1');
-  const div = document.getElementById('tn');
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    if (input.value) {
-      const options = {
-        method: 'post', // ✅ Cambiado de 'put' a 'post'
-        url: '/travellers',
-        type: 'json',
-        data: { surname: input.value }
-      };
-
-      div.innerHTML = '<p>Loading...</p>';
-
-      utils.ajax(options, function (err, res) {
-        if (err) return console.log(err);
-
-        div.innerHTML =
-          '<p>first name: <span id="name">' + res.name + '</span></p>' +
-          '<p>last name: <span id="surname">' + res.surname + '</span></p>' +
-          '<p>dates: <span id="dates">' + res.dates + '</span></p>';
-      });
-    }
-  });
+    div.innerHTML =
+      `<p>first name: <span id="name">${data.name}</span></p>` +
+      `<p>last name: <span id="surname">${data.surname}</span></p>` +
+      `<p>dates: <span id="dates">${data.dates}</span></p>`;
+  } catch (err) {
+    div.innerHTML = '<p>Error loading data</p>';
+    console.error(err);
+  }
 });
