@@ -1,93 +1,151 @@
 const chai = require('chai');
 const assert = chai.assert;
-const chaiHttp = require('chai-http');
+
 const server = require('../server');
 
+const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
-// -------------------- CHAI-HTTP TESTS --------------------
 suite('Functional Tests', function () {
   this.timeout(5000);
-
   suite('Integration tests with chai-http', function () {
-    test('GET /hello with no name', function (done) {
-      chai.request(server)
+
+    
+    // #1
+    test('Test GET /hello with no name', function (done) {
+      chai
+        .request(server)
+        .keepOpen()
         .get('/hello')
-        .end((err, res) => {
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.text, 'hello Guest');
           done();
         });
     });
 
-    test('GET /hello with name query', function (done) {
-      chai.request(server)
+    
+    // #2
+    test('Test GET /hello with your name', function (done) {
+      chai
+        .request(server)
+        .keepOpen()
         .get('/hello?name=xy_z')
-        .end((err, res) => {
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.text, 'hello xy_z');
           done();
         });
     });
 
-    const testTraveller = (surname, expectedName, done) => {
-      chai.request(server)
+    
+    // #3
+    test('Send {surname: "Colombo"}', function (done) {
+      chai
+        .request(server)
+        .keepOpen()
         .put('/travellers')
-        .send({ surname })
-        .end((err, res) => {
+
+        .send({surname: "Colombo"})
+        
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.type, 'application/json');
-          assert.equal(res.body.name, expectedName);
-          assert.equal(res.body.surname, surname);
+          assert.equal(res.body.name, 'Cristoforo');
+          assert.equal(res.body.surname, 'Colombo');
+
           done();
         });
-    };
-
-    test('PUT /travellers with {surname: "Colombo"}', function (done) {
-      testTraveller('Colombo', 'Cristoforo', done);
     });
 
-    test('PUT /travellers with {surname: "da Verrazzano"}', function (done) {
-      testTraveller('da Verrazzano', 'Giovanni', done);
+    
+    // #4
+    test('Send {surname: "da Verrazzano"}', function (done) {
+      chai
+        .request(server)
+        .keepOpen()
+        .put('/travellers')
+
+        .send({surname: "da Verrazzano",
+               name: "Giovanni"
+              })
+
+        .end(function (err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, 'application/json');
+          assert.equal(res.body.name, 'Giovanni');
+          assert.equal(res.body.surname, 'da Verrazzano');
+
+          done();
+          });
     });
   });
 });
 
-// -------------------- ZOMBIE.JS TESTS --------------------
-const Browser = require('zombie');
-Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com'; // tu URL base
-const browser = new Browser();
 
-suite('Functional Tests with Zombie.js', function () {
-  this.timeout(5000);
+  const Browser = require('zombie');
 
-  // suiteSetup usando flecha y done
-  suiteSetup((done) => browser.visit('/', done));
+  Browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
+  
+  
+  suite('Functional Tests with Zombie.js', function() {
+     this.timeout(5000);
+    
+    const browser = new Browser();
 
-  suite('Headless browser', function () {
-    test('should have a working "site" property', function () {
-      assert.isNotNull(browser.site);
-    });
+    suiteSetup(function(done) { 
+    return browser.visit('/', done); 
+
   });
-
-  const testForm = (surname, expectedName, done) => {
-    browser.fill('surname', surname)
-      .pressButton('submit', () => {
-        browser.assert.success();
-        browser.assert.text('span#name', expectedName);
-        browser.assert.text('span#surname', surname);
-        browser.assert.elements('span#dates', 1); // corrected
-        done();
+      
+    suite('Headless browser', function () {
+    test('should have a working "site" property', function() {
+    assert.isNotNull(browser.site);
+    });
       });
-  };
+    
+    
 
-  suite('"Famous Italian Explorers" form', function () {
-    test('Submit the surname "Colombo"', function (done) {
-      testForm('Colombo', 'Cristoforo', done);
-    });
+    suite('"Famous Italian Explorers" form', function() {
+      
+      
+      test('Submit the surname "Colombo" in the HTML form', function(done) {
+  
+        browser.fill('surname', 'Colombo');
+        browser.pressButton('submit', function() {
+            
 
-    test('Submit the surname "Vespucci"', function (done) {
-      testForm('Vespucci', 'Amerigo', done);
+            
+            browser.assert.success();
+            
+            browser.assert.text('span#name', 'Cristoforo');
+            
+            browser.assert.text('span#surname', 'Colombo');
+            
+            browser.assert.elements('span#dates', 1);
+
+            done();   
+       
+          });
+        });
+      
+      test('Submit the surname "Vespucci" in the HTML form', function(done) {
+      
+        browser.fill('surname', 'Vespucci');
+          browser.pressButton('submit', function()  {
+      
+           
+            browser.assert.success();
+      
+            browser.assert.text('span#name', 'Amerigo');
+      
+            browser.assert.text('span#surname', 'Vespucci');
+      
+            browser.assert.elements('span#dates', 1);
+          
+            done();
+       
+          });
+        });  
+      });
     });
-  });
-});
