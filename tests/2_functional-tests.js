@@ -2,32 +2,36 @@ const chai = require('chai');
 const assert = chai.assert;
 const chaiHttp = require('chai-http');
 const Browser = require('zombie');
-const server = require('../server'); // tu app/server
+const server = require('../server'); // Asegúrate de exportar tu app/server
 
 chai.use(chaiHttp);
 
 // ==========================
-// Configuración de Zombie.js
+// Configurar Zombie.js
 // ==========================
 const browser = new Browser();
-browser.site = 'http://localhost:3000'; // o tu URL si está en línea
+browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 
+// ==========================
+// suiteSetup con done() corregido
+// ==========================
 suiteSetup(function(done) {
   this.timeout(5000);
-  return browser.visit('/', done);
+  return browser.visit('/', () => done());
 });
 
 // ==========================
 // Suite de tests funcionales
 // ==========================
-suite('Functional Tests with Zombie.js and Chai-HTTP', function() {
+suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
   this.timeout(10000);
 
   // --------------------------
-  // Tests de integración con chai-http
+  // Tests con chai-http
   // --------------------------
-  suite('Integration tests with chai-http', function() {
-    test('Test GET /hello con sin nombre', function(done) {
+  suite('Integration tests with chai-http', function () {
+
+    test('Test GET /hello with no name', function(done) {
       chai.request(server)
         .get('/hello')
         .end(function(err, res) {
@@ -37,7 +41,7 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function() {
         });
     });
 
-    test('Test GET /hello con nombre', function(done) {
+    test('Test GET /hello with your name', function(done) {
       chai.request(server)
         .get('/hello?name=xy_z')
         .end(function(err, res) {
@@ -75,23 +79,24 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function() {
   });
 
   // --------------------------
-  // Tests del formulario HTML con Zombie
+  // Tests de formulario HTML con Zombie
   // --------------------------
-  suite('"Famous Italian Explorers" form', function() {
-    
-    test('Submit the surname "Colombo" en el formulario HTML', async function() {
+  suite('"Famous Italian Explorers" form', function () {
+
+    test('Submit the surname "Colombo" in the HTML form', async function() {
       this.timeout(5000);
       await browser.visit('/');
-      await browser.fill('surname', 'Colombo');
-      await browser.pressButton('submit');
+      await browser.fill('surname', 'Colombo'); // nombre del input
+      await browser.pressButton('submit');       // botón submit
 
-      browser.assert.success();                       // status 200
-      browser.assert.text('span#name', 'Cristoforo');
-      browser.assert.text('span#surname', 'Colombo');
-      browser.assert.elements('span#dates', 1);       // solo hay uno
+      browser.assert.success();
+      browser.assert.text('span#name', 'Cristoforo');      // nombre correcto
+      browser.assert.text('span#surname', 'Colombo');      // apellido correcto
+      browser.assert.element('span#dates');               // span#dates existe
+      browser.assert.elements('span#dates', 1);           // solo hay uno
     });
 
-    test('Submit the surname "Vespucci" en el formulario HTML', async function() {
+    test('Submit the surname "Vespucci" in the HTML form', async function() {
       this.timeout(5000);
       await browser.visit('/');
       await browser.fill('surname', 'Vespucci');
@@ -100,6 +105,7 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function() {
       browser.assert.success();
       browser.assert.text('span#name', 'Amerigo');
       browser.assert.text('span#surname', 'Vespucci');
+      browser.assert.element('span#dates');
       browser.assert.elements('span#dates', 1);
     });
 
