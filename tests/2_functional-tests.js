@@ -15,9 +15,9 @@ browser.site = 'https://boilerplate-mochachai-jycm.onrender.com';
 // ==========================
 // suiteSetup con done() corregido
 // ==========================
-suiteSetup(function(done) {
+suiteSetup(function (done) {
   this.timeout(5000);
-  browser.visit('/', done);
+  return browser.visit('/', done);
 });
 
 // ==========================
@@ -31,31 +31,31 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
   // --------------------------
   suite('Integration tests with chai-http', function () {
 
-    test('Test GET /hello with no name', function(done) {
+    test('Test GET /hello with no name', function (done) {
       chai.request(server)
         .get('/hello')
-        .end(function(err, res) {
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.text, 'hello Guest');
           done();
         });
     });
 
-    test('Test GET /hello with your name', function(done) {
+    test('Test GET /hello with your name', function (done) {
       chai.request(server)
         .get('/hello?name=xy_z')
-        .end(function(err, res) {
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.text, 'hello xy_z');
           done();
         });
     });
 
-    test('Send {surname: "Colombo"}', function(done) {
+    test('Send {surname: "Colombo"}', function (done) {
       chai.request(server)
         .put('/travellers')
         .send({ surname: 'Colombo' })
-        .end(function(err, res) {
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.type, 'application/json');
           assert.equal(res.body.name, 'Cristoforo');
@@ -64,11 +64,11 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
         });
     });
 
-    test('Send {surname: "da Verrazzano"}', function(done) {
+    test('Send {surname: "da Verrazzano"}', function (done) {
       chai.request(server)
         .put('/travellers')
         .send({ surname: 'da Verrazzano' })
-        .end(function(err, res) {
+        .end(function (err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.type, 'application/json');
           assert.equal(res.body.name, 'Giovanni');
@@ -83,7 +83,9 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
   // --------------------------
   suite('"Famous Italian Explorers" form', function () {
 
-    test('Submit the surname "Colombo" in the HTML form', async function() {
+    test('Submit the surname "Colombo" in the HTML form', async function () {
+      this.timeout(5000);
+      await browser.visit('/');
       await browser.fill('surname', 'Colombo'); // nombre del input
       await browser.pressButton('submit');       // botón submit
 
@@ -93,7 +95,9 @@ suite('Functional Tests with Zombie.js and Chai-HTTP', function () {
       browser.assert.elements('span#dates', 1);
     });
 
-    test('Submit the surname "Vespucci" in the HTML form', async function() {
+    test('Submit the surname "Vespucci" in the HTML form', async function () {
+      this.timeout(5000);
+      await browser.visit('/');
       await browser.fill('surname', 'Vespucci');
       await browser.pressButton('submit');
 
