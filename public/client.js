@@ -13,7 +13,7 @@ function Utils() {
         if (Math.floor(xmlhttp.status / 100) === 2) {
           let results = xmlhttp.responseText;
           const type = xmlhttp.getResponseHeader('Content-Type');
-          if (type && type.match('application/json')) {
+          if (type && type.includes('application/json')) {
             results = JSON.parse(results);
           }
           cb(null, results);
@@ -28,43 +28,30 @@ function Utils() {
 
     if (url.charAt(url.length - 1) === '/') url = url.slice(0, url.length - 1);
 
-    if (options.data) {
-      let query;
-      let contentType = "application/x-www-form-urlencoded";
+    let query = null;
+    let contentType = 'application/x-www-form-urlencoded';
 
+    if (options.data) {
       if (options.type === 'json') {
         query = JSON.stringify(options.data);
-        contentType = "application/json";
+        contentType = 'application/json';
       } else {
         query = [];
         for (let key in options.data) {
           query.push(key + '=' + encodeURIComponent(options.data[key]));
-          query.push('&');
         }
-        query.pop();
-        query = query.join('');
+        query = query.join('&');
       }
+    }
 
-      switch (method.toLowerCase()) {
-        case 'get':
-          url += '?' + query;
-          xmlhttp.open(method, url, true);
-          xmlhttp.send();
-          break;
-        case 'put':
-        case 'patch':
-        case 'delete':
-        case 'post':
-          xmlhttp.open(method, url, true);
-          xmlhttp.setRequestHeader("Content-type", contentType);
-          xmlhttp.send(query);
-          break;
-        default:
-          return;
-      }
-    } else {
+    if (['get'].includes(method.toLowerCase())) {
+      if (query) url += '?' + query;
       xmlhttp.open(method, url, true);
       xmlhttp.send();
+    } else {
+      xmlhttp.open(method, url, true);
+      xmlhttp.setRequestHeader('Content-type', contentType);
+      xmlhttp.send(query);
     }
   };
 }
@@ -72,37 +59,31 @@ function Utils() {
 const utils = new Utils();
 
 utils.ready(function() {
-
   const form = document.getElementById('f1');
   const input = document.getElementById('i1');
   const div = document.getElementById('tn');
 
-  // Evitar errores si los elementos no existen
-  if (!form || !input || !div) return;
-
   form.addEventListener('submit', function(e) {
     e.preventDefault();
+    const surname = input.value;
+    if (!surname) return;
 
-    if (input.value) {
-      const options = {
-        method: 'put',
-        url: '/travellers',
-        type: 'json',
-        data: { surname: input.value }
-      };
+    const options = {
+      method: 'put',
+      url: '/travellers',
+      type: 'json',
+      data: { surname: surname }
+    };
 
-      div.innerHTML = '<p>Loading...</p>';
+    div.innerHTML = '<p>Loading...</p>';
 
-      utils.ajax(options, function(err, res) {
-        if (err) return console.log(err);
+    utils.ajax(options, function(err, res) {
+      if (err) return console.log(err);
 
-        // Renderizar respuesta en el DOM según FCC
-        div.innerHTML =
-          '<p>first name: <span id="name">' + res.name + '</span></p>' +
-          '<p>last name: <span id="surname">' + res.surname + '</span></p>' +
-          '<p>dates: <span id="dates">' + res.dates + '</span></p>';
-      });
-    }
+      div.innerHTML =
+        '<p>first name: <span id="name">' + res.name + '</span></p>' +
+        '<p>last name: <span id="surname">' + res.surname + '</span></p>' +
+        '<p>dates: <span id="dates">' + res.dates + '</span></p>';
+    });
   });
-
 });
